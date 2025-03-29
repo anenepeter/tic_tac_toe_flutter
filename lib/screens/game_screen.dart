@@ -37,15 +37,18 @@ class GameScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                // TODO: Implement reset game functionality
-                print('Reset Game button pressed');
-              },
-              child: const Text('Reset Game'),
+            child: Consumer<GameProvider>(
+              builder: (context, gameProvider, _) => ElevatedButton(
+                onPressed: () {
+                  gameProvider.resetGame();
+                },
+                child: const Text('Reset Game'),
+              ),
             ),
           ),
-          Text('Game Status: Player X\'s turn'), // Placeholder for game status message
+          Consumer<GameProvider>(
+            builder: (context, gameProvider, _) => Text('Game Status: ${gameProvider.gameStatus}'), // Placeholder for game status message
+          ),
           const SizedBox(height: 20),
         ],
       ),

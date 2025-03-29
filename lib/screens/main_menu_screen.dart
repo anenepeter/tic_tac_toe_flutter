@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class MainMenuScreen extends StatelessWidget {
   const MainMenuScreen({super.key});
@@ -33,8 +34,7 @@ class MainMenuScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                // TODO: Implement exit functionality
-                print('Exit button pressed');
+                SystemNavigator.pop();
               },
               child: const Text('Exit'),
             ),
