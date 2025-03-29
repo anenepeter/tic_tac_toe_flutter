@@ -20,10 +20,26 @@ class GameScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Consumer<GameProvider>(
-                  builder: (context, gameProvider, _) => Text('Player X: ${gameProvider.playerXScore}'),
+                  builder: (context, gameProvider, _) => AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 200),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: gameProvider.currentPlayer == 'X' ? FontWeight.bold : FontWeight.normal,
+                      color: gameProvider.currentPlayer == 'X' ? Colors.blue : Colors.black,
+                    ),
+                    child: Text('Player X: ${gameProvider.playerXScore}'),
+                  ),
                 ),// Placeholder for Player X score
                 Consumer<GameProvider>(
-                  builder: (context, gameProvider, _) => Text('Player O: ${gameProvider.playerOScore}'),
+                  builder: (context, gameProvider, _) => AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 200),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: gameProvider.currentPlayer == 'O' ? FontWeight.bold : FontWeight.normal,
+                      color: gameProvider.currentPlayer == 'O' ? Colors.red : Colors.black,
+                    ),
+                    child: Text('Player O: ${gameProvider.playerOScore}'),
+                  ),
                 ),// Placeholder for Player O score
               ],
             ),

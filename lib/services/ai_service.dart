@@ -1,6 +1,10 @@
 import 'dart:math';
+import 'game_service.dart';
 
 class AIService {
+  AIService({required GameService gameService}) : _gameService = gameService;
+
+  final GameService _gameService;
   String _difficulty = 'easy';
   final Random _random = Random();
 
@@ -11,12 +15,12 @@ class AIService {
   String makeMove(List<List<String>> board) {
     switch (_difficulty) {
       case 'hard':
-        return _getBestMove(board);
+        return _hardAiMove(board);
       case 'medium':
-        return _random.nextBool() ? _getBestMove(board) : _getRandomMove(board);
+        return _mediumAiMove(board);
       case 'easy':
       default:
-        return _getRandomMove(board);
+        return _easyAiMove(board);
     }
   }
 
@@ -33,7 +37,20 @@ class AIService {
     return availableMoves[_random.nextInt(availableMoves.length)];
   }
 
-  String _getBestMove(List<List<String>> board) {
+  String _easyAiMove(List<List<String>> board) {
+    List<String> availableMoves = [];
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        if (board[i][j].isEmpty) {
+          availableMoves.add('$i,$j');
+        }
+      }
+    }
+    if (availableMoves.isEmpty) return '';
+    return availableMoves[_random.nextInt(availableMoves.length)];
+  }
+
+  String _mediumAiMove(List<List<String>> board) {
     int bestScore = -1000;
     String bestMove = '';
 
@@ -41,7 +58,7 @@ class AIService {
       for (int j = 0; j < 3; j++) {
         if (board[i][j].isEmpty) {
           board[i][j] = 'O';
-          int score = _minimax(board, 0, false);
+          int score = _minimax(board, 0, -1000, 1000, false);
           board[i][j] = '';
 
           if (score > bestScore) {
@@ -54,11 +71,32 @@ class AIService {
     return bestMove;
   }
 
-  int _minimax(List<List<String>> board, int depth, bool isMaximizing) {
+  String _hardAiMove(List<List<String>> board) {
+    int bestScore = -1000;
+    String bestMove = '';
+
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        if (board[i][j].isEmpty) {
+          board[i][j] = 'O';
+          int score = _minimax(board, 0, -1000, 1000, false);
+          board[i][j] = '';
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestMove = '$i,$j';
+          }
+        }
+      }
+    }
+    return bestMove;
+  }
+
+  int _minimax(List<List<String>> board, int depth, int alpha, int beta, bool isMaximizing) {
     // Check terminal states
-    if (_checkWin(board, 'O')) return 10 - depth;
-    if (_checkWin(board, 'X')) return depth - 10;
-    if (_checkDraw(board)) return 0;
+    if (_gameService.checkWin(board, 'O').isNotEmpty) return 10 - depth;
+    if (_gameService.checkWin(board, 'X').isNotEmpty) return depth - 10;
+    if (_gameService.checkDraw(board)) return 0;
 
     if (isMaximizing) {
       int bestScore = -1000;
@@ -66,8 +104,13 @@ class AIService {
         for (int j = 0; j < 3; j++) {
           if (board[i][j].isEmpty) {
             board[i][j] = 'O';
-            bestScore = max(bestScore, _minimax(board, depth + 1, false));
+            int score = _minimax(board, depth + 1, alpha, beta, false);
             board[i][j] = '';
+            bestScore = max(bestScore, score);
+            alpha = max(alpha, bestScore);
+            if (beta <= alpha) {
+              break;
+            }
           }
         }
       }
@@ -78,40 +121,17 @@ class AIService {
         for (int j = 0; j < 3; j++) {
           if (board[i][j].isEmpty) {
             board[i][j] = 'X';
-            bestScore = min(bestScore, _minimax(board, depth + 1, true));
+            int score = _minimax(board, depth + 1, alpha, beta, true);
             board[i][j] = '';
+            bestScore = min(bestScore, score);
+            beta = min(beta, bestScore);
+            if (beta < alpha) {
+              break;
+            }
           }
         }
       }
       return bestScore;
     }
-  }
-
-  bool _checkWin(List<List<String>> board, String player) {
-    // Check rows
-    for (int i = 0; i < 3; i++) {
-      if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
-        return true;
-      }
-    }
-    // Check columns
-    for (int j = 0; j < 3; j++) {
-      if (board[0][j] == player && board[1][j] == player && board[2][j] == player) {
-        return true;
-      }
-    }
-    // Check diagonals
-    if (board[0][0] == player && board[1][1] == player && board[2][2] == player) return true;
-    if (board[0][2] == player && board[1][1] == player && board[2][0] == player) return true;
-    return false;
-  }
-
-  bool _checkDraw(List<List<String>> board) {
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-        if (board[i][j].isEmpty) return false;
-      }
-    }
-    return true;
   }
 }

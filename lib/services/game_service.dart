@@ -4,25 +4,27 @@ class GameService {
     return List.generate(3, (_) => List.filled(3, ''));
   }
 
-  bool checkWin(List<List<String>> board, String player) {
+  List<int> checkWin(List<List<String>> board, String player) {
     // Check rows
     for (int i = 0; i < 3; i++) {
       if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
-        return true;
+        return [i * 3 + 0, i * 3 + 1, i * 3 + 2];
       }
     }
     // Check columns
     for (int j = 0; j < 3; j++) {
       if (board[0][j] == player && board[1][j] == player && board[2][j] == player) {
-        return true;
+        return [0 * 3 + j, 1 * 3 + j, 2 * 3 + j];
       }
     }
     // Check diagonals
-    if ((board[0][0] == player && board[1][1] == player && board[2][2] == player) ||
-        (board[0][2] == player && board[1][1] == player && board[2][0] == player)) {
-      return true;
+    if (board[0][0] == player && board[1][1] == player && board[2][2] == player) {
+      return [0, 4, 8];
     }
-    return false;
+    if (board[0][2] == player && board[1][1] == player && board[2][0] == player) {
+      return [2, 4, 6];
+    }
+    return [];
   }
 
   bool checkDraw(List<List<String>> board) {
@@ -33,7 +35,7 @@ class GameService {
         }
       }
     }
-    return !checkWin(board, 'X') && !checkWin(board, 'O'); // It's a draw if no winner and board is full
+    return checkWin(board, 'X').isEmpty && checkWin(board, 'O').isEmpty; // It's a draw if no winner and board is full
   }
 
   bool validateMove(List<List<String>> board, int row, int col) {

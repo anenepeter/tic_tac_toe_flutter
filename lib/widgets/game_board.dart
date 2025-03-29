@@ -4,7 +4,9 @@ import '../providers/game_provider.dart';
 import 'game_cell.dart';
 
 class GameBoard extends StatefulWidget {
-  const GameBoard({super.key});
+  final List<int> winningLine;
+
+  const GameBoard({super.key, this.winningLine = const []});
 
   @override
   State<GameBoard> createState() => _GameBoardState();
@@ -23,10 +25,12 @@ class _GameBoardState extends State<GameBoard> {
         itemBuilder: (context, index) {
           int row = index ~/ 3;
           int col = index % 3;
+          bool isWinningCell = widget.winningLine.contains(index); // Check if cell is in winning line
           return GameCell(
             index: index,
             onTap: () => gameProvider.makeMove(row, col),
             value: gameProvider.board[row][col],
+            isWinningCell: isWinningCell, // Pass isWinningCell to GameCell
           );
         },
         itemCount: 9,
