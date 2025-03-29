@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'screens/main_menu_screen.dart';
-import 'screens/game_screen.dart';
 import 'package:provider/provider.dart';
 import 'providers/game_provider.dart';
+import 'screens/main_menu_screen.dart';
+import 'screens/game_screen.dart';
 import 'screens/settings_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => GameProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -15,17 +20,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Tic Tac Toe Flutter',
+      title: 'Tic Tac Toe',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const MainMenuScreen(),
+      initialRoute: '/',
       routes: {
-        '/game': (context) => ChangeNotifierProvider(
-          create: (context) => GameProvider(),
-          child: const GameScreen(),
-        ),
+        '/': (context) => const MainMenuScreen(),
+        '/game': (context) => const GameScreen(),
         '/settings': (context) => const SettingsScreen(),
       },
     );
