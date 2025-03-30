@@ -55,9 +55,10 @@ class AIService {
     if (board[1][1].isEmpty) return '1,1';
     
     // Try corners
-    List<String> corners = ['0,0', '0,2', '2,0', '2,2'];
-    corners.shuffle(_random);
-    for (String corner in corners) {
+    const List<String> corners = ['0,0', '0,2', '2,0', '2,2'];
+    List<String> shuffledCorners = List.from(corners);
+    shuffledCorners.shuffle(_random);
+    for (String corner in shuffledCorners) {
       List<String> coords = corner.split(',');
       int row = int.parse(coords[0]);
       int col = int.parse(coords[1]);

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../services/game_service.dart';
 import '../services/local_storage_service.dart'; // Import LocalStorageService
 import '../services/ai_service.dart';
@@ -82,35 +81,39 @@ class GameProvider extends ChangeNotifier {
     }
   }
 
-  void _makeAIMove() {
-    if (_isGameOver) return;
-    
-    String aiMove = _aiService.makeMove(_board);
-    if (aiMove.isNotEmpty) {
-      List<String> moveCoords = aiMove.split(',');
-      int row = int.parse(moveCoords[0]);
-      int col = int.parse(moveCoords[1]);
+  
+    void _makeAIMove() {
+      if (_isGameOver) return;
       
-      _board[row][col] = _currentPlayer;
-      
-      List<int> winningCells = _gameService.checkWin(_board, _currentPlayer);
-      if (winningCells.isNotEmpty) {
-        _gameStatus = 'AI wins!';
-        _isGameOver = true;
-        _winningLine = winningCells;
-        _playerOScore++;
-        _saveScores();
-      } else if (_gameService.checkDraw(_board)) {
-        _gameStatus = 'Draw!';
-        _isGameOver = true;
-      } else {
-        _currentPlayer = 'X';
-        _gameStatus = 'Your turn';
-      }
-      notifyListeners();
+      Future.delayed(const Duration(milliseconds: 500), () {
+        String aiMove = _aiService.makeMove(_board);
+        if (aiMove.isNotEmpty) {
+          List<String> moveCoords = aiMove.split(',');
+          int row = int.parse(moveCoords[0]);
+          int col = int.parse(moveCoords[1]);
+          
+          _board[row][col] = _currentPlayer;
+          
+          List<int> winningCells = _gameService.checkWin(_board, _currentPlayer);
+          if (winningCells.isNotEmpty) {
+            _gameStatus = 'AI wins!';
+            _isGameOver = true;
+            _winningLine = winningCells; // Store winning cells
+            _playerOScore++;
+            _saveScores(); // Save scores to local storage
+            notifyListeners();
+          } else if (_gameService.checkDraw(_board)) {
+            _gameStatus = 'Draw!';
+            _isGameOver = true;
+            notifyListeners();
+          } else {
+            _currentPlayer = 'X';
+            _gameStatus = 'Your turn';
+            notifyListeners();
+          }
+        }
+      });
     }
-  }
-
   Future<void> _saveScores() async {
     await _localStorageService.saveScores(_playerXScore, _playerOScore);
   }
@@ -132,7 +135,6 @@ class GameProvider extends ChangeNotifier {
   void startSinglePlayerGame() {
     _gameMode = 'single_player';
     resetGame();
-    
     // Randomly decide who starts
     if (Random().nextBool()) {
       _currentPlayer = 'O';
@@ -140,10 +142,9 @@ class GameProvider extends ChangeNotifier {
       notifyListeners();
       
       // Make AI move after a short delay
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _makeAIMove();
-      });
+      Future.delayed(const Duration(milliseconds: 500), _makeAIMove);
     }
+    notifyListeners();
   }
 
   void setAIDifficulty(String difficulty) {

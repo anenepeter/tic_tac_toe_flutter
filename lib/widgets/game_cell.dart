@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class GameCell extends StatelessWidget {
+  static const Duration animationDuration = Duration(milliseconds: 500);
+  static final Matrix4 winningCellScale = Matrix4.diagonal3Values(1.2, 1.2, 1.0);
+  static final Matrix4 identityTransform = Matrix4.identity();
   final int index;
   final VoidCallback onTap;
   final String value;
@@ -19,8 +22,8 @@ class GameCell extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 500),
-        transform: isWinningCell ? Matrix4.diagonal3Values(1.2, 1.2, 1.0) : Matrix4.identity(), // Scale winning cell
+        duration: animationDuration,
+        transform: isWinningCell ? winningCellScale : identityTransform, // Scale winning cell
         decoration: BoxDecoration(
           color: isWinningCell ? Colors.yellow[200] : Colors.transparent, // Highlight winning cell
           border: Border.all(color: isWinningCell ? Colors.orange : Colors.black), // Change border color

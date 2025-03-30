@@ -1,20 +1,22 @@
 class GameService {
+  static const List<List<String>> initialBoard = [
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', ''],
+  ];
+
   List<List<String>> initializeBoard() {
-    // TODO: Implement initialize game board logic
-    return List.generate(3, (_) => List.filled(3, ''));
+    return initialBoard;
   }
 
   List<int> checkWin(List<List<String>> board, String player) {
-    // Check rows
+    // Check rows and columns
     for (int i = 0; i < 3; i++) {
       if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
-        return [i * 3 + 0, i * 3 + 1, i * 3 + 2];
+        return [i * 3 + 0, i * 3 + 1, i * 3 + 2]; // row
       }
-    }
-    // Check columns
-    for (int j = 0; j < 3; j++) {
-      if (board[0][j] == player && board[1][j] == player && board[2][j] == player) {
-        return [0 * 3 + j, 1 * 3 + j, 2 * 3 + j];
+      if (board[0][i] == player && board[1][i] == player && board[2][i] == player) {
+        return [0 * 3 + i, 1 * 3 + i, 2 * 3 + i]; // col
       }
     }
     // Check diagonals
