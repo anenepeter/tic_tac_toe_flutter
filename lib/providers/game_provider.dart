@@ -85,32 +85,30 @@ class GameProvider extends ChangeNotifier {
   void _makeAIMove() {
     if (_isGameOver) return;
     
-    Future.delayed(const Duration(milliseconds: 500), () {
-      String aiMove = _aiService.makeMove(_board);
-      if (aiMove.isNotEmpty) {
-        List<String> moveCoords = aiMove.split(',');
-        int row = int.parse(moveCoords[0]);
-        int col = int.parse(moveCoords[1]);
-        
-        _board[row][col] = _currentPlayer;
-        
-        List<int> winningCells = _gameService.checkWin(_board, _currentPlayer);
-        if (winningCells.isNotEmpty) {
-          _gameStatus = 'AI wins!';
-          _isGameOver = true;
-          _winningLine = winningCells; // Store winning cells
-          _playerOScore++;
-        } else if (_gameService.checkDraw(_board)) {
-          _gameStatus = 'Draw!';
-          _isGameOver = true;
-        } else {
-          _currentPlayer = 'X';
-          _gameStatus = 'Your turn';
-        }
-        _saveScores(); // Save scores to local storage
-        notifyListeners();
+    String aiMove = _aiService.makeMove(_board);
+    if (aiMove.isNotEmpty) {
+      List<String> moveCoords = aiMove.split(',');
+      int row = int.parse(moveCoords[0]);
+      int col = int.parse(moveCoords[1]);
+      
+      _board[row][col] = _currentPlayer;
+      
+      List<int> winningCells = _gameService.checkWin(_board, _currentPlayer);
+      if (winningCells.isNotEmpty) {
+        _gameStatus = 'AI wins!';
+        _isGameOver = true;
+        _winningLine = winningCells;
+        _playerOScore++;
+        _saveScores();
+      } else if (_gameService.checkDraw(_board)) {
+        _gameStatus = 'Draw!';
+        _isGameOver = true;
+      } else {
+        _currentPlayer = 'X';
+        _gameStatus = 'Your turn';
       }
-    });
+      notifyListeners();
+    }
   }
 
   Future<void> _saveScores() async {
@@ -134,13 +132,18 @@ class GameProvider extends ChangeNotifier {
   void startSinglePlayerGame() {
     _gameMode = 'single_player';
     resetGame();
+    
     // Randomly decide who starts
     if (Random().nextBool()) {
       _currentPlayer = 'O';
       _gameStatus = 'AI\'s turn';
-      _makeAIMove();
+      notifyListeners();
+      
+      // Make AI move after a short delay
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _makeAIMove();
+      });
     }
-    notifyListeners();
   }
 
   void setAIDifficulty(String difficulty) {

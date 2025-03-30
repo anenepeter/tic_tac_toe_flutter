@@ -17,7 +17,8 @@ class AIService {
       case 'hard':
         return _hardAiMove(board);
       case 'medium':
-        return _mediumAiMove(board);
+        // 70% chance of making a strategic move, 30% chance of random move
+        return _random.nextDouble() < 0.7 ? _mediumAiMove(board) : _easyAiMove(board);
       case 'easy':
       default:
         return _easyAiMove(board);
@@ -38,37 +39,33 @@ class AIService {
   }
 
   String _easyAiMove(List<List<String>> board) {
-    List<String> availableMoves = [];
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-        if (board[i][j].isEmpty) {
-          availableMoves.add('$i,$j');
-        }
-      }
-    }
-    if (availableMoves.isEmpty) return '';
-    return availableMoves[_random.nextInt(availableMoves.length)];
+    return _getRandomMove(board);
   }
 
   String _mediumAiMove(List<List<String>> board) {
-    int bestScore = -1000;
-    String bestMove = '';
+    // First try to win
+    String winningMove = _findWinningMove(board, 'O');
+    if (winningMove.isNotEmpty) return winningMove;
 
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-        if (board[i][j].isEmpty) {
-          board[i][j] = 'O';
-          int score = _minimax(board, 0, -1000, 1000, false);
-          board[i][j] = '';
+    // Then try to block player
+    String blockingMove = _findWinningMove(board, 'X');
+    if (blockingMove.isNotEmpty) return blockingMove;
 
-          if (score > bestScore) {
-            bestScore = score;
-            bestMove = '$i,$j';
-          }
-        }
-      }
+    // If no winning or blocking moves, try to take center or corners
+    if (board[1][1].isEmpty) return '1,1';
+    
+    // Try corners
+    List<String> corners = ['0,0', '0,2', '2,0', '2,2'];
+    corners.shuffle(_random);
+    for (String corner in corners) {
+      List<String> coords = corner.split(',');
+      int row = int.parse(coords[0]);
+      int col = int.parse(coords[1]);
+      if (board[row][col].isEmpty) return corner;
     }
-    return bestMove;
+
+    // Otherwise make a random move
+    return _getRandomMove(board);
   }
 
   String _hardAiMove(List<List<String>> board) {
@@ -133,5 +130,21 @@ class AIService {
       }
       return bestScore;
     }
+  }
+
+  String _findWinningMove(List<List<String>> board, String player) {
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        if (board[i][j].isEmpty) {
+          board[i][j] = player;
+          if (_gameService.checkWin(board, player).isNotEmpty) {
+            board[i][j] = '';
+            return '$i,$j';
+          }
+          board[i][j] = '';
+        }
+      }
+    }
+    return '';
   }
 }
