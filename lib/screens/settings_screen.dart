@@ -59,6 +59,29 @@ class SettingsScreen extends StatelessWidget {
                   },
                   child: const Text('Reset Scores'),
                 ),
+                const SizedBox(height: 24),
+                const Text(
+                  'App Information',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'App Name: Tic Tac Toe',
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'App Version: 1.0.0',
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Developer: Ekene Peter Anene',
+                  style: TextStyle(fontSize: 16),
+                ),
               ],
             ),
           );
