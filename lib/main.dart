@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'screens/about_screen.dart';
 import 'providers/game_provider.dart';
 import 'screens/main_menu_screen.dart';
 import 'screens/game_screen.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const MainMenuScreen(),
         '/game': (context) => const GameScreen(),
         '/settings': (context) => const SettingsScreen(),
+        '/about': (context) => const AboutScreen(),
       },
     );
   }
