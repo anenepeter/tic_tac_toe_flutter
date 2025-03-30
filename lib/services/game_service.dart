@@ -39,7 +39,10 @@ class GameService {
   }
 
   bool validateMove(List<List<String>> board, int row, int col) {
-    // TODO: Implement move validation logic
-    return true;
+    // Check if the cell is already occupied
+    if (board[row][col].isNotEmpty) {
+      return false; // Cell is occupied, move is invalid
+    }
+    return true; // Cell is empty, move is valid
   }
 }

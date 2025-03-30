@@ -46,9 +46,12 @@ class GameScreen extends StatelessWidget {
           ),
           Expanded(
             child: Center(
-              child: Consumer<GameProvider>(
-                builder: (context, gameProvider, _) => GameBoard(),
-              ), // GameBoard widget now wrapped with Consumer
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0), // Add horizontal padding
+                child: Consumer<GameProvider>(
+                  builder: (context, gameProvider, _) => GameBoard(),
+                ), // GameBoard widget now wrapped with Consumer and Padding
+              ),
             ),
           ),
           Padding(

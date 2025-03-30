@@ -43,6 +43,7 @@ class GameProvider extends ChangeNotifier {
 
   void makeMove(int row, int col) {
     if (_isGameOver || !_gameService.validateMove(_board, row, col)) return;
+    if (_gameMode == 'single_player' && _currentPlayer == 'O') return; // Prevent user from playing before AI
 
     // Make player move
     _board[row][col] = _currentPlayer;

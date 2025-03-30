@@ -20,9 +20,10 @@ class GameCell extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 500),
+        transform: isWinningCell ? Matrix4.diagonal3Values(1.2, 1.2, 1.0) : Matrix4.identity(), // Scale winning cell
         decoration: BoxDecoration(
           color: isWinningCell ? Colors.yellow[200] : Colors.transparent, // Highlight winning cell
-          border: Border.all(),
+          border: Border.all(color: isWinningCell ? Colors.orange : Colors.black), // Change border color
         ),
         child: Center(
           child: Text(value), // Display cell content (X or O)
