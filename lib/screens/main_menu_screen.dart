@@ -45,6 +45,13 @@ class MainMenuScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
+                    Navigator.pushNamed(context, '/about');
+                  },
+                  child: const Text('About'),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
                     SystemNavigator.pop();
                   },
                   child: const Text('Exit'),
